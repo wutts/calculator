@@ -1,13 +1,13 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and data models
+- [x] 1. Set up project structure and data models
   - Create directory structure: `domain/`, `infrastructure/`, `ui/`, `app/`
   - Add `__init__.py` files to make packages importable
   - Create ExpressionToken and CalculationRecord dataclasses in `domain/models.py`
   - Define OperationHandler protocol for type hints
   - _Requirements: 5.1, 6.1, 6.3_
 
-- [ ] 2. Implement basic arithmetic operations
+- [-] 2. Implement basic arithmetic operations
   - Create `domain/operations.py` with basic operation functions (+, -, *, /)
   - Implement division by zero error handling
   - Add operation metadata (precedence, associativity)
