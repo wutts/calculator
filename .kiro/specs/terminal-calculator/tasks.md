@@ -1,103 +1,74 @@
 # Implementation Plan
 
-- [ ] 1. Set up project structure and core classes
-  - Create directory structure for models, services, and interfaces
-  - Define Python abstract base classes and protocols for all major components
-  - Set up basic project structure with __init__.py files
-  - _Requirements: 5.1, 6.3_
+- [ ] 1. Set up project structure and data models
+  - Create directory structure: `domain/`, `infrastructure/`, `ui/`, `app/`
+  - Add `__init__.py` files to make packages importable
+  - Create ExpressionToken and CalculationRecord dataclasses in `domain/models.py`
+  - Define OperationHandler protocol for type hints
+  - _Requirements: 5.1, 6.1, 6.3_
 
-- [ ] 2. Implement data models and core types
-  - Create ExpressionToken dataclass and related types using Python dataclasses
-  - Implement CalculationRecord dataclass for history storage
-  - Define OperationHandler protocol for mathematical operations
-  - Write basic validation functions for data integrity
-  - _Requirements: 2.1-2.5, 3.1-3.3_
-
-- [ ] 3. Create Operation Registry with basic arithmetic
-- [ ] 3.1 Implement Operation Registry foundation
-  - Code OperationRegistry class with plugin architecture
-  - Implement methods for registering and retrieving operations
-  - Write unit tests for operation registration and lookup
-  - _Requirements: 5.2, 5.3_
-
-- [ ] 3.2 Implement basic arithmetic operations
-  - Create operation handlers for addition, subtraction, multiplication, division
-  - Include proper precedence handling for each operation
-  - Add division by zero error handling
-  - Write comprehensive unit tests for all arithmetic operations
+- [ ] 2. Implement basic arithmetic operations
+  - Create `domain/operations.py` with basic operation functions (+, -, *, /)
+  - Implement division by zero error handling
+  - Add operation metadata (precedence, associativity)
+  - Write unit tests for all arithmetic operations
   - _Requirements: 2.1-2.5_
 
-- [ ] 4. Build Expression Parser with parentheses support
-- [ ] 4.1 Implement basic tokenization
-  - Create tokenizer to convert string expressions into ExpressionToken arrays
-  - Handle numbers, operators, and parentheses recognition
-  - Implement syntax validation for malformed expressions
-  - Write unit tests for tokenization edge cases
-  - _Requirements: 3.3, 4.1, 4.2_
+- [ ] 3. Build expression parser using AST
+  - Create `domain/expression_parser.py` using Python's `ast` module
+  - Implement safe expression parsing without `eval()`
+  - Add syntax validation and error handling for malformed expressions
+  - Handle parentheses and operator precedence through AST
+  - Write unit tests for parsing various expression formats
+  - _Requirements: 3.1-3.3, 4.1, 4.2_
 
-- [ ] 4.2 Add parentheses parsing and validation
-  - Implement parentheses matching and nesting validation
-  - Create logic to handle operator precedence with parentheses
-  - Add error handling for mismatched parentheses
-  - Write unit tests for complex parentheses scenarios
-  - _Requirements: 3.1, 3.2, 3.3_
+- [ ] 4. Implement calculation engine
+  - Create `domain/calculation_engine.py` with AST visitor pattern
+  - Implement safe evaluation of parsed expressions
+  - Integrate with arithmetic operations from step 2
+  - Add comprehensive mathematical error handling
+  - Write unit tests for calculation accuracy and edge cases
+  - _Requirements: 2.1-2.5, 3.1-3.2, 4.1-4.4_
 
-- [ ] 5. Implement Calculation Engine
-  - Create CalculationEngine class that evaluates parsed expressions
-  - Implement expression tree evaluation with proper operator precedence
-  - Integrate with Operation Registry for mathematical operations
-  - Add comprehensive error handling for mathematical errors
-  - Write unit tests for calculation accuracy and error scenarios
-  - _Requirements: 2.1-2.5, 3.1, 3.2_- [
- ] 6. Create History Manager
-  - Implement HistoryManager class with storage for last 10 calculations
-  - Add methods for adding calculations and retrieving history
+- [ ] 5. Create history manager
+  - Implement `infrastructure/history_manager.py` using `collections.deque`
+  - Add methods for storing and retrieving last 10 calculations
   - Implement automatic cleanup when history exceeds capacity
-  - Create clear history functionality
+  - Add clear history functionality
   - Write unit tests for history storage and retrieval
   - _Requirements: 7.1-7.4_
 
-- [ ] 7. Build Terminal Interface
-- [ ] 7.1 Implement basic terminal I/O operations
-  - Create TerminalInterface class with input/output methods
-  - Implement welcome message display and user prompting
-  - Add result display and error message formatting
-  - Write unit tests for terminal interface methods
-  - _Requirements: 1.1, 4.3, 4.4_
+- [ ] 6. Build terminal interface
+  - Create `ui/terminal_interface.py` with input/output methods
+  - Implement welcome message, user prompting, and result display
+  - Add formatted history display functionality
+  - Include error message formatting for user-friendly feedback
+  - Handle keyboard interrupts (Ctrl+C) gracefully on macOS
+  - Write unit tests using `io.StringIO` for I/O simulation
+  - _Requirements: 1.1, 4.3, 4.4, 7.1, 8.2_
 
-- [ ] 7.2 Add history display functionality
-  - Implement formatted history display in terminal
-  - Add command recognition for "history" input
-  - Ensure proper formatting of calculation history
-  - Write unit tests for history display formatting
-  - _Requirements: 7.1_
-
-- [ ] 8. Implement Calculator Controller
-- [ ] 8.1 Create main application controller
-  - Implement CalculatorController class with main application loop
-  - Add input processing logic for expressions and commands
+- [ ] 7. Implement calculator controller
+  - Create `app/calculator_controller.py` with main application loop
+  - Add input processing for expressions and commands ("history", "quit", "exit")
   - Integrate all components (parser, engine, history, interface)
-  - Handle graceful shutdown for "quit" and "exit" commands
-  - _Requirements: 1.2, 1.3, 1.4_
+  - Implement comprehensive error handling with user-friendly messages
+  - Add signal handling for graceful shutdown on macOS
+  - Write unit tests for controller logic and error scenarios
+  - _Requirements: 1.2-1.4, 4.1-4.4, 8.2_
 
-- [ ] 8.2 Add comprehensive error handling
-  - Implement error catching and user-friendly message conversion
-  - Ensure application continues running after errors
-  - Add input validation and sanitization
-  - Write unit tests for error handling scenarios
-  - _Requirements: 4.1-4.4_
+- [ ] 8. Create main entry point and integration tests
+  - Create `calculator.py` as main application entry point
+  - Implement application initialization and startup
+  - Write integration tests testing complete user workflows
+  - Test end-to-end scenarios with complex expressions and error cases
+  - Verify all requirements through automated testing
+  - _Requirements: 1.1-1.4, 8.1-8.5_
 
-- [ ] 9. Create integration tests and main entry point
-  - Write integration tests that test complete user workflows
-  - Create main application entry point that initializes and starts calculator
-  - Test end-to-end scenarios including complex expressions and error cases
-  - Verify all requirements are met through automated testing
-  - _Requirements: 1.1-1.4, 2.1-2.5, 3.1-3.3, 4.1-4.4, 7.1-7.4_
-
-- [ ] 10. Final testing and validation
+- [ ] 9. Final validation and documentation
   - Run comprehensive test suite covering all components
-  - Test calculator with various mathematical expressions
-  - Validate error handling with invalid inputs
-  - Verify history functionality works correctly
-  - Ensure modular architecture supports future extensions
-  - _Requirements: All requirements 1-7_
+  - Test calculator with various mathematical expressions and edge cases
+  - Validate error handling with invalid inputs and system errors
+  - Verify history functionality and capacity limits
+  - Test macOS Terminal compatibility and signal handling
+  - Update README.md with usage instructions and examples
+  - _Requirements: All requirements 1-8_
